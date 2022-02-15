@@ -1,25 +1,9 @@
-import { useEffect, useState } from 'react'
-import { api } from '../../services/api'
+import { useTransactions } from '../../hooks/useTransactionsContext'
+import { formatMoney } from '../../utils/moneyFormater'
 import { Container } from './styles'
 
-interface ITransactionResponse {
-	id: number
-	title: string
-	amount: number
-	type: string
-	category: string
-	createdAt: string
-}
-
 export function TransactionsTable() {
-	const [transactions, serTransactions] = useState<ITransactionResponse[]>([])
-
-	useEffect(() => {
-		api
-			.get('/transactions')
-			.then((response) => serTransactions(response.data.transactions))
-	}, [])
-
+	const { transactions } = useTransactions()
 	return (
 		<Container>
 			<table>
@@ -36,10 +20,7 @@ export function TransactionsTable() {
 						<tr key={transation.id}>
 							<td>{transation.title}</td>
 							<td className={transation.type}>
-								{new Intl.NumberFormat('pt-BR', {
-									style: 'currency',
-									currency: 'BRL',
-								}).format(transation.amount)}
+								{formatMoney(transation.amount)}
 							</td>
 							<td>{transation.category}</td>
 							<td>
